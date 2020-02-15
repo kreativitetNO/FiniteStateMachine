@@ -1,26 +1,19 @@
 #include <iostream>
 
+#include "Fsm/StateBaseTemplate.h"
 #include "Fsm/FiniteStateMachine.h"
 
-struct StateData
+struct SharedData
 {
-    int stateDataVariable_;
+    double globalDataVariable_ = 5.0;
 };
 
-struct GlobalData
-{
-    double globalDataVariable_;
-};
-
-using MyFunctionalClassFSM = FiniteStateMachine<GlobalData,StateData>;
-
-class StateBase : public MyFunctionalClassFSM::StateBase
+class StateBase : public StateBaseTemplate<FiniteStateMachine<StateBase,SharedData>, SharedData>
 {
     public:
-    StateBase(MyFunctionalClassFSM& finiteStateMachine,
-              GlobalData& globalData,
-              StateData& stateData)
-        : MyFunctionalClassFSM::StateBase { finiteStateMachine, globalData, stateData }
+    StateBase(FiniteStateMachine<StateBase,SharedData>& finiteStateMachine,
+              SharedData& sharedData)
+        : StateBaseTemplate<FiniteStateMachine<StateBase,SharedData>, SharedData> { finiteStateMachine, sharedData }
     {}
     virtual void stateSwappingMethod() {}
     virtual void stateMethod() {}
@@ -31,10 +24,9 @@ class State2;
 class State1 : public StateBase
 {
     public:
-    State1(MyFunctionalClassFSM& finiteStateMachine,
-           GlobalData& globalData,
-           StateData& stateData)
-        : StateBase { finiteStateMachine, globalData, stateData }
+    State1(FiniteStateMachine<StateBase,SharedData>& finiteStateMachine,
+           SharedData& globalData)
+        : StateBase { finiteStateMachine, globalData }
     {}
 
     void onEntry() override
@@ -54,18 +46,19 @@ class State1 : public StateBase
 
     void stateMethod() override
     {
-        std::cout << "State 1 - someMethod()" << std::endl;
+        sharedData_.globalDataVariable_ -= 1;
+        std::cout << "State 1 - someMethod()  - globalData_.globalDataVariable_ = "
+                  << sharedData_.globalDataVariable_ << std::endl;
     }
 };
 
 class State2 : public StateBase
 {
     public:
-    State2(MyFunctionalClassFSM& finiteStateMachine,
-           GlobalData& globalData,
-           StateData& stateData,
+    State2(FiniteStateMachine<StateBase,SharedData>& finiteStateMachine,
+           SharedData& globalData,
            int someDependency)
-        : StateBase { finiteStateMachine, globalData, stateData }
+        : StateBase { finiteStateMachine, globalData }
     {}
 
     void onEntry() override
@@ -85,15 +78,18 @@ class State2 : public StateBase
 
     void stateMethod() override
     {
-        std::cout << "State 2 - someMethod()" << std::endl;
+        sharedData_.globalDataVariable_ += 1;
+        std::cout << "State 2 - someMethod() - globalData_.globalDataVariable_ = "
+                  << sharedData_.globalDataVariable_ << std::endl;
     }
 };
 
 class MyFunctionalClass
-    : public MyFunctionalClassFSM
+    : public FiniteStateMachine<StateBase,SharedData>
 {
     public:
     MyFunctionalClass()
+        : FiniteStateMachine<StateBase,SharedData> { globalData_ }
     {
         registerState<State1>();
         registerState<State2>(4);
@@ -108,6 +104,9 @@ class MyFunctionalClass
     {
         currentState().stateSwappingMethod();
     }
+
+    private:
+    SharedData globalData_;
 };
 
 int main()
@@ -118,6 +117,12 @@ int main()
 
     mfc.changeState<State1>();
 
+    mfc.stateMethod();
+    mfc.stateSwappingMethod();
+    mfc.stateMethod();
+    mfc.stateSwappingMethod();
+    mfc.stateMethod();
+    mfc.stateSwappingMethod();
     mfc.stateMethod();
     mfc.stateSwappingMethod();
     mfc.stateMethod();
