@@ -111,8 +111,6 @@ class MyFunctionalClass
 
 int main()
 {
-    /* Matt Parker - How to program math programs video */
-
     MyFunctionalClass mfc;
 
     mfc.changeState<State1>();
