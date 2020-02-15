@@ -1,15 +1,37 @@
 #include <iostream>
 
-#include "Fsm/Data.h"
-#include "Fsm/StateBase.h"
 #include "Fsm/FiniteStateMachine.h"
+
+struct StateData
+{
+    int stateDataVariable_;
+};
+
+struct GlobalData
+{
+    double globalDataVariable_;
+};
+
+using MyFunctionalClassFSM = FiniteStateMachine<GlobalData,StateData>;
+
+class StateBase : public MyFunctionalClassFSM::StateBase
+{
+    public:
+    StateBase(MyFunctionalClassFSM& finiteStateMachine,
+              GlobalData& globalData,
+              StateData& stateData)
+        : MyFunctionalClassFSM::StateBase { finiteStateMachine, globalData, stateData }
+    {}
+    virtual void stateSwappingMethod() {}
+    virtual void stateMethod() {}
+};
 
 class State2;
 
 class State1 : public StateBase
 {
     public:
-    State1(FiniteStateMachine& finiteStateMachine,
+    State1(MyFunctionalClassFSM& finiteStateMachine,
            GlobalData& globalData,
            StateData& stateData)
         : StateBase { finiteStateMachine, globalData, stateData }
@@ -39,7 +61,7 @@ class State1 : public StateBase
 class State2 : public StateBase
 {
     public:
-    State2(FiniteStateMachine& finiteStateMachine,
+    State2(MyFunctionalClassFSM& finiteStateMachine,
            GlobalData& globalData,
            StateData& stateData,
            int someDependency)
@@ -68,7 +90,7 @@ class State2 : public StateBase
 };
 
 class MyFunctionalClass
-    : public FiniteStateMachine
+    : public MyFunctionalClassFSM
 {
     public:
     MyFunctionalClass()
@@ -86,8 +108,6 @@ class MyFunctionalClass
     {
         currentState().stateSwappingMethod();
     }
-
-    private:
 };
 
 int main()
