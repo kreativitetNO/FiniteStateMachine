@@ -2,16 +2,18 @@
 #define STATEBASE_H
 
 #include "GlobalData.h"
-#include "Fsm/StateBase.h"
 #include "Fsm/FiniteStateMachine.h"
 
-class StateBase : public Fsm::StateBase<Fsm::FiniteStateMachine<StateBase,GlobalData>,GlobalData>
+class StateBase;
+using MyFunctionalClassFsm = typename Fsm::FiniteStateMachine<StateBase,GlobalData>;
+
+class StateBase : public MyFunctionalClassFsm::StateBase
 {
     public:
 
-    StateBase(Fsm::FiniteStateMachine<StateBase,GlobalData>& finiteStateMachine,
+    StateBase(MyFunctionalClassFsm& finiteStateMachine,
               GlobalData& sharedData)
-        : Fsm::StateBase<Fsm::FiniteStateMachine<StateBase,GlobalData>,GlobalData> { finiteStateMachine, sharedData }
+        : MyFunctionalClassFsm::StateBase { finiteStateMachine, sharedData }
     {}
     
     virtual void stateSwappingMethod() {}

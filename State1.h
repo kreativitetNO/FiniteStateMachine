@@ -9,7 +9,7 @@ class State2;
 class State1 : public StateBase
 {
     public:
-    State1(Fsm::FiniteStateMachine<StateBase,GlobalData>& finiteStateMachine,
+    State1(MyFunctionalClassFsm& finiteStateMachine,
            GlobalData& globalData)
         : StateBase { finiteStateMachine, globalData }
     {}
@@ -36,6 +36,5 @@ class State1 : public StateBase
                   << sharedData_.globalDataVariable_ << std::endl;
     }
 };
-
 
 #endif

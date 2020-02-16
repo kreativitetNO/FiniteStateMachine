@@ -8,11 +8,11 @@
 #include "State2.h"
 
 class MyFunctionalClass
-    : public Fsm::FiniteStateMachine<StateBase,GlobalData>
+    : public MyFunctionalClassFsm
 {
     public:
     MyFunctionalClass(ISomeInterface& someDependency)
-        : Fsm::FiniteStateMachine<StateBase,GlobalData> { globalData_ }
+        : MyFunctionalClassFsm { globalData_ }
     {
         registerState<State1>();
         registerState<State2>(someDependency);

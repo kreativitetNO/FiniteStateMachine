@@ -8,7 +8,7 @@
 class State2 : public StateBase
 {
     public:
-    State2(Fsm::FiniteStateMachine<StateBase, GlobalData>& finiteStateMachine,
+    State2(MyFunctionalClassFsm& finiteStateMachine,
            GlobalData& globalData,
            ISomeInterface& someDependency)
         : StateBase { finiteStateMachine, globalData }
